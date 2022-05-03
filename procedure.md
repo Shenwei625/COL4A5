@@ -227,20 +227,6 @@ sed -i '1d' conserve.tsv
 
 
 
-LINE=$(wc -l 1.tsv)
-for i in $(seq $LINE);do
-  CHROM=$(sed -n "${i}p" 1.tsv | cut -f 1)
-  POS=$(sed -n "${i}p" 1.tsv | cut -f 2)
-  REF=$(sed -n "${i}p" 1.tsv | cut -f 4)
-  ALT=$(sed -n "${i}p" 1.tsv | cut -f 5)
-  echo -e "$CHROM:$POS:$REF:$ALT" >> 2.tsv
-done  
-sed -i '1d' 2.tsv
-
-
-
-
-
 
 
 
