@@ -55,13 +55,36 @@ wc -l clinvar.col4a5.tsv
 
 + Clinvar处理
 ```bash
-
+# 构建唯一标识符，vcf文件为例
+cat clinvar.vcf | grep -v "##" > tem&&
+  mv tem clinvar.vcf
+LINE=$(wc -l clinvar.vcf)
+head -n 1 clinvar.vcf
+# #CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO
+for i in $(seq $LINE);do
+  CHROM=$(sed -n "${i}p" clinvar.vcf | cut -f 1)
+  POS=$(sed -n "${i}p" clinvar.vcf | cut -f 2)
+  REF=$(sed -n "${i}p" clinvar.vcf | cut -f 4)
+  ALT=$(sed -n "${i}p" clinvar.vcf | cut -f 5)
+  echo -e "$CHROM:$POS:$REF:$ALT" >> marker.tsv
+done  
+sed -i '1d' clinical.marker.tsv
 ```
 
 
 
 ### VEP的使用
+```bash
+# 安装
+git clone https://github.com/Ensembl/ensembl-vep.git
+cd ensembl-vep
+perl INSTALL.pl
 
+# 注释
+
+
+
+```
 
 
 
