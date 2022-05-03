@@ -16,7 +16,14 @@ gsutil cp gs://gcp-public-data--gnomad/release/3.1.2/vcf/genomes/gnomad.genomes.
 
 + Clinvar
 ```bash
+wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar_20220430.vcf.gz
 
+# md5
+wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar_20220430.vcf.gz.md5
+cat clinvar_20220430.vcf.gz.md5
+# 8aeb3aa191632bf06556948c853b5f06  /panfs/pan1/clintest/ftp_test_MGG_REPORT/vcf/vcf_GRCh38/clinvar_20220430.vcf.gz 待测试文件路径有点问题，修改一下
+sed -i 's/\/.\+\///g' clinvar_20220430.vcf.gz.md5
+md5sum --check clinvar_20220430.vcf.gz.md5 # md5检验
 ```
 
 ### 数据集合并
