@@ -25,6 +25,12 @@ cat clinvar_20220430.vcf.gz.md5
 sed -i 's/\/.\+\///g' clinvar_20220430.vcf.gz.md5
 md5sum --check clinvar_20220430.vcf.gz.md5 # md5检验
 ```
++ 删选出col4a5中的snv位点
+```bash
+
+```
+
+
 
 ### 数据集合并
 + GnomAD处理
