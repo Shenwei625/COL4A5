@@ -53,6 +53,14 @@ wc -l clinvar.col4a5.tsv
 cat gnomAD.csv | tr "," "\t" > gnomeAD.tsv
 head -n 1 gnomeAD.tsv
 # Chromosome      Position        rsIDs   Reference       Alternate       Source  Filters - exomes        Filters - genomes       Transcript      HGVS Consequence        Protein Consequence     Transcript Consequence  VEP Annotation  ClinVar Clinical Significance   ClinVar Variation ID    Flags   Allele Count    Allele Number   Allele Frequency        Homozygote Count        Hemizygote Count        Allele Count Other      Allele Number Other     Homozygote Count Other  Hemizygote Count Other  Allele Count Latino/Admixed American    Allele Number Latino/Admixed American   Homozygote Count Latino/Admixed American        Hemizygote Count Latino/Admixed American        Allele Count European (Finnish) Allele Number European (Finnish)        Homozygote Count European (Finnish)     Hemizygote Count European (Finnish)     Allele Count Amish      Allele Number Amish     Homozygote Count Amish  Hemizygote Count Amish  Allele Count East Asian Allele Number East Asian        Homozygote Count East Asian     Hemizygote Count East Asian     Allele Count Middle Eastern     Allele Number Middle Eastern    Homozygote Count Middle Eastern Hemizygote Count Middle Eastern Allele Count African/African American   Allele Number African/African American  Homozygote Count African/African American       Hemizygote Count African/African American       Allele Count South Asian        Allele Number South Asian       Homozygote Count South Asian   Hemizygote Count South Asian     Allele Count Ashkenazi Jewish   Allele Number Ashkenazi Jewish  Homozygote Count Ashkenazi Jewish       Hemizygote Count Ashkenazi Jewish       Allele Count European (non-Finnish)     Allele Number European (non-Finnish)    Homozygote Count European (non-Finnish) Hemizygote Count European (non-Finnish)
+
+# 将标题中的空格改成下划线
+
+
+
+tsv-select -H --fields Chromosome,Position,Reference,Alternate gnomAD.tsv > gnomAD.filter.tsv
+
+
 ```
 
 + Clinvar处理
