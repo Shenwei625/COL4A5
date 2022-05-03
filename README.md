@@ -25,12 +25,27 @@ cat clinvar_20220430.vcf.gz.md5
 sed -i 's/\/.\+\///g' clinvar_20220430.vcf.gz.md5
 md5sum --check clinvar_20220430.vcf.gz.md5 # md5检验
 ```
-+ 删选出col4a5中的snv位点
++ 筛选出col4a5中的单碱基替换位点
 ```bash
+gzip -d clinvar_20220430.vcf.gz # 解压
+cat clinvar_20220430.vcf.gz | grep "##" > head.tsv # 保存注释区
+cat clinvar_20220430.vcf_ | grep -v -f head.tsv > clinvar.tsv # 删除注释
 
+# X染色体
+tsv-filter -H --str-eq 1:X clinvar.tsv > clinvar.x.tsv
+# 位置：108439838-108697545
+tsv-filter -H --ge 2:108439838 clinvar.x.tsv | 
+  tsv-filter -H --le 2:108697545 > clinvar.x.loc.tsv
+# 单碱基替换
+tsv-filter -H --char-len-eq 4:1 clinvar.x.loc.tsv | 
+  tsv-filter -H --char-len-eq 5:1 > clinvar.col4a5.tsv 
+
+wc -l clinvar.col4a5.tsv 
+# 1252
+# X       108580280       1678410 A       G
+# X       108598691       1678532 T       A
+# X       108694845       1678593 T       C
 ```
-
-
 
 ### 数据集合并
 + GnomAD处理
