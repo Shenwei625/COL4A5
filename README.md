@@ -3,15 +3,16 @@
 + GnomAD
 ```bash
 # 利用gsutil下载数据
-sudo apt upgrade
-sudo apt install gsutil
+pip3 install gsutil
 
 # 检索gnomAD数据库中的数据
 gsutil ls gs://gcp-public-data--gnomad/release/
 gsutil ls gs://gcp-public-data--gnomad/release/3.1.2/vcf/genomes/
 gsutil du gs://gcp-public-data--gnomad/release/3.1.2/vcf/genomes/gnomad.genomes.v3.1.2.sites.chrX.vcf.bgz # 查看文件大小
 gsutil cp gs://gcp-public-data--gnomad/release/3.1.2/vcf/genomes/gnomad.genomes.v3.1.2.sites.chrX.vcf.bgz . # 下载
-# 文件太大，是否可以下载特定转录本、基因的突变信息？？
+
+# 利用bcftools处理下载的数据
+
 ```
 
 + Clinvar
@@ -54,13 +55,18 @@ cat gnomAD.csv | tr "," "\t" > gnomeAD.tsv
 head -n 1 gnomeAD.tsv
 # Chromosome      Position        rsIDs   Reference       Alternate       Source  Filters - exomes        Filters - genomes       Transcript      HGVS Consequence        Protein Consequence     Transcript Consequence  VEP Annotation  ClinVar Clinical Significance   ClinVar Variation ID    Flags   Allele Count    Allele Number   Allele Frequency        Homozygote Count        Hemizygote Count        Allele Count Other      Allele Number Other     Homozygote Count Other  Hemizygote Count Other  Allele Count Latino/Admixed American    Allele Number Latino/Admixed American   Homozygote Count Latino/Admixed American        Hemizygote Count Latino/Admixed American        Allele Count European (Finnish) Allele Number European (Finnish)        Homozygote Count European (Finnish)     Hemizygote Count European (Finnish)     Allele Count Amish      Allele Number Amish     Homozygote Count Amish  Hemizygote Count Amish  Allele Count East Asian Allele Number East Asian        Homozygote Count East Asian     Hemizygote Count East Asian     Allele Count Middle Eastern     Allele Number Middle Eastern    Homozygote Count Middle Eastern Hemizygote Count Middle Eastern Allele Count African/African American   Allele Number African/African American  Homozygote Count African/African American       Hemizygote Count African/African American       Allele Count South Asian        Allele Number South Asian       Homozygote Count South Asian   Hemizygote Count South Asian     Allele Count Ashkenazi Jewish   Allele Number Ashkenazi Jewish  Homozygote Count Ashkenazi Jewish       Hemizygote Count Ashkenazi Jewish       Allele Count European (non-Finnish)     Allele Number European (non-Finnish)    Homozygote Count European (non-Finnish) Hemizygote Count European (non-Finnish)
 
-# 将标题中的空格改成下划线
-
-
-
 tsv-select -H --fields Chromosome,Position,Reference,Alternate gnomAD.tsv > gnomAD.filter.tsv
 
-
+# 构建唯一标识符
+LINE=$(wc -l gnomAD.filter.tsv)
+for i in $(seq $LINE);do
+  CHROM=$(sed -n "${i}p" gnomAD.filter.tsv | cut -f 1)
+  POS=$(sed -n "${i}p" gnomAD.filter.tsv | cut -f 2)
+  REF=$(sed -n "${i}p" gnomAD.filter.tsv | cut -f 4)
+  ALT=$(sed -n "${i}p" gnomAD.filter.tsv | cut -f 5)
+  echo -e "$CHROM:$POS:$REF:$ALT" >> gnomAD.marker.tsv
+done  
+sed -i '1d' gnomAD.marker.tsv
 ```
 
 + Clinvar处理
@@ -81,8 +87,6 @@ done
 sed -i '1d' clinical.marker.tsv
 ```
 
-
-
 ### VEP的使用
 ```bash
 # 安装
@@ -91,8 +95,6 @@ cd ensembl-vep
 perl INSTALL.pl
 
 # 注释
-
-
 
 ```
 
