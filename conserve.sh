@@ -1,5 +1,13 @@
-### 氨基酸保守位点的确定
 #! usr/bin/bash
+### 氨基酸保守位点的确定
+
+# check whether muscle is installed
+hash muscle 2>/dev/null || {
+    echo >&2 "muscle is required but it's not installed.";
+    echo >&2 "brew install muscle";
+    exit 1;
+}
+
 file=$1 #从命令行中传递文件名称
 file_name=$(echo $file | cut -d "." -f 1) #获取不带扩展名的文件名称
 
