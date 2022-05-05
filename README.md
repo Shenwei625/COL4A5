@@ -31,14 +31,11 @@ md5sum --check clinvar_20220430.vcf.gz.md5 # md5检验
 ```
 + 筛选出col4a5中的单碱基替换位点
 ```bash
-gzip -d clinvar_20220430.vcf.gz # 解压
-cat clinvar_20220430.vcf | grep "##" > head.tsv # 保存注释区
-cat clinvar_20220430.vcf | grep -v "##" > clinvar.tsv # 删除注释
-
+mv clinvar_20220430.vcf.gz clinvar.vcf.gz
 # 利用bcftools筛选下载的数据
-
-
-
+bcftools index --threads 4 clinvar.vcf.gz
+bcftools filter clinvar.vcf.gz --regions X:108439838-108697545 > clinvar.x.vcf
+bcftools view -v snps clinvar.x.vcf > clinvar.col4a5.vcf
 
 wc -l clinvar.col4a5.tsv 
 # 1252
@@ -56,6 +53,9 @@ cat gnomAD.csv | tr "," "\t" > gnomeAD.tsv
 
 + Clinvar处理
 ```bash
+cat clinvar.col4a5.vcf | grep -v "##" > tem&&
+    mv tem clinvar.col4a5.vcf
+
 cat clinvar.col4a5.tsv | perl -e' while(<>){
     if (/\s(\d*)\s\d*\s([A-Z])\s([A-Z])\s/) {
         print "X:$1:$2:$3"
