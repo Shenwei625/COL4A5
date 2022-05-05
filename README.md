@@ -56,15 +56,15 @@ cat gnomAD.csv | tr "," "\t" > gnomeAD.tsv
 cat clinvar.col4a5.vcf | grep -v "##" > tem&&
     mv tem clinvar.col4a5.vcf
 
-cat clinvar.col4a5.tsv | perl -e' while(<>){
+cat clinvar.col4a5.tsv | perl -e' while(<>){   
     if (/\s(\d*)\s\d*\s([A-Z])\s([A-Z])\s/) {
         print "X:$1:$2:$3"
     }
     
     if (/(CLNSIG=.*?);/) {
         print "\t$1\n"
-    }
-}' > clinvar.filter.tsv
+    }  
+}' > test.tsv
 
 # 添加致病与否的信息（致病T，不致病F）
 cat clinvar.filter.tsv | perl -e' while(<>){
