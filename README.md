@@ -11,7 +11,10 @@ gsutil ls gs://gcp-public-data--gnomad/release/3.1.2/vcf/genomes/
 gsutil du gs://gcp-public-data--gnomad/release/3.1.2/vcf/genomes/gnomad.genomes.v3.1.2.sites.chrX.vcf.bgz # 查看文件大小
 gsutil cp gs://gcp-public-data--gnomad/release/3.1.2/vcf/genomes/gnomad.genomes.v3.1.2.sites.chrX.vcf.bgz . # 下载
 
+mv gnomad.genomes.v3.1.2.sites.chrX.vcf.bgz sites.chrX.vcf.bgz #重命名
 # 利用bcftools筛选下载的数据
+bcftools index --threads 4 sites.chrX.vcf.bgz
+bcftools filter --threads 4 -e '108439838<POS<108697545' sites.chrX.vcf.bgz > gnomAD.tsv
 
 ```
 
@@ -29,8 +32,8 @@ md5sum --check clinvar_20220430.vcf.gz.md5 # md5检验
 + 筛选出col4a5中的单碱基替换位点
 ```bash
 gzip -d clinvar_20220430.vcf.gz # 解压
-cat clinvar_20220430.vcf.gz | grep "##" > head.tsv # 保存注释区
-cat clinvar_20220430.vcf_ | grep -v "##" > clinvar.tsv # 删除注释
+cat clinvar_20220430.vcf | grep "##" > head.tsv # 保存注释区
+cat clinvar_20220430.vcf | grep -v "##" > clinvar.tsv # 删除注释
 
 # 利用bcftools筛选下载的数据
 
@@ -137,6 +140,23 @@ perl INSTALL.pl
 
 # 注释
 
+
+
+# 在VEP结果后面添加致病性
+# 将vep文件的第一列改为唯一标识符
+HEAD=$(head -n 1 vep.tsv) 
+sed -i '1d' vep.tsv
+sed -i 's/_/:/1' vep.tsv
+sed -i 's/_/:/1' vep.tsv
+sed -i 's/\//:/1' vep.tsv
+(echo $HEAD | tr " " "\t" && cat vep.tsv) > tem&&
+    mv tem vep.tsv
+
+(echo -e "#Uploaded_variation\tPathogenicity" && cat merge.tsv) > tem&&
+    mv tem merge.tsv # 添加表头  
+    
+tsv-join --filter-file merge.tsv --H --key-fields 1 --append-fields Pathogenicity vep.tsv > tem&&
+    mv tem vep.tsv
 ```
 
 
