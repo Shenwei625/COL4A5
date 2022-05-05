@@ -76,7 +76,44 @@ cat clinvar.filter.tsv | perl -e' while(<>){
 
 # 统计
 tsv-summarize --count -g 2 clinvar.filter.tsv
+CLNSIG=Pathogenic       252
+CLNSIG=Likely_benign    390
+CLNSIG=Uncertain_significance   141
+CLNSIG=Benign   123
+CLNSIG=Conflicting_interpretations_of_pathogenicity     31
+CLNSIG=Likely_pathogenic        260
+CLNSIG=Benign/Likely_benign     25
+CLNSIG=Pathogenic/Likely_pathogenic     28
+
 tsv-summarize --count -g 3 clinvar.filter.tsv
+T       280
+F       970
+```
+
++ 合并
+```bash
+cat clinvar.tsv | grep -f gnomAD.tsv | wc -l
+303
+cat clinvar.tsv | grep -f gnomAD.tsv > both.tsv
+cat both.tsv | cut -f 1 > both.marker.tsv
+
+cat clinvar.tsv | cut -f 1 > clinvar.marker.tsv
+cat gnomAD.tsv | cut -f 1 > gnomAD.marker.tsv
+cat clinvar.marker.tsv | grep -f gnomAD.marker.tsv | wc -l
+304
+
+cat clinvar.marker.tsv | grep -f gnomAD.marker.tsv | grep -v -f both.marker.tsv
+X:108559155:T:C
+
+for i in clinvar.tsv gnomAD.tsv;do
+    cat $i | grep -v -f both.tsv | grep -v "X:108559155:T:C" >> merge.tsv
+done
+cat both.tsv >> merge.tsv
+
+# 统计
+tsv-summarize --count -g 2 merge.tsv
+T       279
+F       2137
 ```
 
 ### VEP的使用
