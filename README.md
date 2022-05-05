@@ -66,7 +66,7 @@ cat clinvar.col4a5.tsv | perl -e' while(<>){
 # 添加致病与否的信息（致病T，不致病F）
 cat clinvar.filter.tsv | perl -e' while(<>){
     chomp($_);
-    if (/Pathogenic/) {
+    if (/Pathogenic|Likely_pathogenic/) {
         print "$_\tT\n";
     }else {
         print "$_\tF\n";
@@ -86,14 +86,14 @@ CLNSIG=Benign/Likely_benign     25
 CLNSIG=Pathogenic/Likely_pathogenic     28
 
 tsv-summarize --count -g 3 clinvar.filter.tsv
-T       280
-F       970
+T       540
+F       710
 ```
 
 + 合并
 ```bash
 cat clinvar.tsv | grep -f gnomAD.tsv | wc -l
-303
+300
 cat clinvar.tsv | grep -f gnomAD.tsv > both.tsv
 cat both.tsv | cut -f 1 > both.marker.tsv
 
@@ -104,16 +104,28 @@ cat clinvar.marker.tsv | grep -f gnomAD.marker.tsv | wc -l
 
 cat clinvar.marker.tsv | grep -f gnomAD.marker.tsv | grep -v -f both.marker.tsv
 X:108559155:T:C
+X:108601959:A:G
+X:108624316:G:A
+X:108677590:G:C
+cat clinvar.marker.tsv | grep -f gnomAD.marker.tsv | grep -v -f both.marker.tsv > discard.tsv
 
 for i in clinvar.tsv gnomAD.tsv;do
-    cat $i | grep -v -f both.tsv | grep -v "X:108559155:T:C" >> merge.tsv
+    cat $i | grep -v -f both.tsv | grep -v -f discard.tsv >> merge.tsv
 done
 cat both.tsv >> merge.tsv
 
 # 统计
 tsv-summarize --count -g 2 merge.tsv
-T       279
-F       2137
+T       536
+F       1877
+
+# 转换格式
+cat merge.tsv | cut -f 1 | perl -e ' while(<>){
+    chomp($_);
+    if (/X:(\d*):([A-Z]):([A-Z])/) {
+        print "X\t$1\t$1\t$2/$3\n"
+    }
+}'   > format.tsv
 ```
 
 ### VEP的使用
