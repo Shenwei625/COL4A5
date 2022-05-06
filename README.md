@@ -14,8 +14,8 @@ gsutil cp gs://gcp-public-data--gnomad/release/3.1.2/vcf/genomes/gnomad.genomes.
 mv gnomad.genomes.v3.1.2.sites.chrX.vcf.bgz sites.chrX.vcf.bgz #重命名
 # 利用bcftools筛选下载的数据
 bcftools index --threads 4 sites.chrX.vcf.bgz
-bcftools filter --threads 4 -e '108439838<POS<108697545' sites.chrX.vcf.bgz > gnomAD.tsv
-
+bcftools filter sites.chrX.vcf.bgz --regions chrX:108439838-108697545 > gnomAD.x.vcf
+bcftools view -v snps gnomAD.x.vcf > gnomAD.col4a5.vcf
 ```
 
 + Clinvar
@@ -38,7 +38,6 @@ bcftools filter clinvar.vcf.gz --regions X:108439838-108697545 > clinvar.x.vcf
 bcftools view -v snps clinvar.x.vcf > clinvar.col4a5.vcf
 
 wc -l clinvar.col4a5.vcf 
-# 1252
 # X       108580280       1678410 A       G
 # X       108598691       1678532 T       A
 # X       108694845       1678593 T       C
