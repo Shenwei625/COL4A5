@@ -98,6 +98,12 @@ F       710
 
 + 合并
 ```bash
+mkdir merge
+cd merge
+cat ../clinvar.filter.tsv | cut -f 1.3 > clinvar.tsv
+
+
+
 cat clinvar.tsv | grep -f gnomAD.tsv | wc -l
 300
 cat clinvar.tsv | grep -f gnomAD.tsv > both.tsv
