@@ -37,7 +37,7 @@ bcftools index --threads 4 clinvar.vcf.gz
 bcftools filter clinvar.vcf.gz --regions X:108439838-108697545 > clinvar.x.vcf
 bcftools view -v snps clinvar.x.vcf > clinvar.col4a5.vcf
 
-wc -l clinvar.col4a5.tsv 
+wc -l clinvar.col4a5.vcf 
 # 1252
 # X       108580280       1678410 A       G
 # X       108598691       1678532 T       A
@@ -56,7 +56,7 @@ cat gnomAD.csv | tr "," "\t" > gnomeAD.tsv
 cat clinvar.col4a5.vcf | grep -v "##" > tem&&
     mv tem clinvar.col4a5.vcf
 
-cat clinvar.col4a5.tsv | perl -e' while(<>){   
+cat clinvar.col4a5.vcf | perl -e' while(<>){   
     if (/\s(\d*)\s\d*\s([A-Z])\s([A-Z])\s/) {
         print "X:$1:$2:$3"
     }
@@ -64,7 +64,7 @@ cat clinvar.col4a5.tsv | perl -e' while(<>){
     if (/(CLNSIG=.*?);/) {
         print "\t$1\n"
     }  
-}' > test.tsv
+}' > clinvar.filter.tsv
 
 # 添加致病与否的信息（致病T，不致病F）
 cat clinvar.filter.tsv | perl -e' while(<>){
