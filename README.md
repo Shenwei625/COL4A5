@@ -66,7 +66,7 @@ cat clinvar.col4a5.vcf | perl -e' while(<>){
             print "\t$1\n";
         }
     }else {
-    next;
+        next;
     }    
 }' > clinvar.filter.tsv
 
@@ -78,7 +78,7 @@ cat clinvar.filter.tsv | perl -e' while(<>){
     }else {
         print "$_\tF\n";
     }
-}' > tem&&
+}' >tem&&
     mv tem clinvar.filter.tsv
 
 # 统计
