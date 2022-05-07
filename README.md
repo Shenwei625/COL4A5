@@ -166,6 +166,9 @@ sed -i 's/\//:/1' vep.tsv
     
 tsv-join --filter-file merge.tsv --H --key-fields 1 --append-fields Pathogenicity vep.tsv > tem&&
     mv tem vep.tsv
+Pathogenicity   count
+F       1877
+T       536    
 ```
 
 
