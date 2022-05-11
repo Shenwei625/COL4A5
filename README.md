@@ -135,7 +135,7 @@ F       1877
 cat merge.tsv | cut -f 1 | perl -e ' while(<>){
     chomp($_);
     if (/X:(\d*):([A-Z]):([A-Z])/) {
-        print "X\t$1\t$1\t$2/$3\n"
+        print "X\t$1\t$1\t$2/$3\t+\n"
     }
 }'   > format.tsv
 ```
