@@ -166,9 +166,18 @@ sed -i 's/\//:/1' vep.tsv
     
 tsv-join --filter-file merge.tsv --H --key-fields 1 --append-fields Pathogenicity vep.tsv > tem&&
     mv tem vep.tsv
+tsv-summarize -H --count -g Pathogenicity vep.tsv # 统计致病与不致病位点数目
 Pathogenicity   count
 F       1877
 T       536    
+
+# 分离致病与不致病的位点
+tsv-filter -H  --str-eq Pathogenicity:F vep.tsv > F.tsv 
+tsv-filter -H  --str-eq Pathogenicity:T vep.tsv > T.tsv
+
+
+
+
 ```
 
 
