@@ -174,10 +174,42 @@ T       536
 # 分离致病与不致病的位点
 tsv-filter -H  --str-eq Pathogenicity:F vep.tsv > F.tsv 
 tsv-filter -H  --str-eq Pathogenicity:T vep.tsv > T.tsv
+```
++ 向vep文件中添加topmed_AF注释
+```bash
+#! usr/bin/bash
+echo -e "==>向vep文件中添加TOPMED数据集中的AF注释\n"
+
+file1=$1
+
+# topmed数据集预处理
+cat topmed.csv | tr "," "\t" |
+    tsv-select -H --fields 'Variant*','Frequency*' > topmed.AF.tsv
+sed -i 's/"//g' topmed.AF.tsv
+sed -i 's/-/:/g' topmed.AF.tsv
+cat topmed.AF.tsv | cut -f 1 | sed '1d' > topmed.marker.lst
 
 
+# 构建merge文件
+file_name=$(echo $file1 | cut -d "." -f 1)
+cat $file1 | cut -f 1 | sed '1d' > $file_name.marker.lst 
+cat topmed.marker.lst | grep -f $file_name.marker.lst > anno.marker.lst
+NUMBER=$(cat anno.marker.lst | wc -l )
+echo -e "有$NUMBER个位点在topmed中有注释\n"
+cat $file_name.marker.lst | grep -v -f anno.marker.lst > blank.marker.lst
+cat topmed.AF.tsv | grep -f anno.marker.lst >> merge.tsv
+cat blank.marker.lst | perl -e 'while (<>) {
+    chomp($_);
+    print "$_\t-\n";
+}' >> merge.tsv
+(echo -e "#Uploaded_variation\ttopmed_AF" && cat merge.tsv) > tem&&
+    mv tem merge.tsv
+rm *.lst
 
-
+# 合并
+tsv-join --filter-file merge.tsv --H --key-fields 1 --append-fields topmed_AF $file1 > tem&&
+    mv tem $file1
+rm merge.tsv topmed.AF.tsv  
 ```
 
 
