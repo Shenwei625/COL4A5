@@ -212,7 +212,7 @@ tsv-join --filter-file merge.tsv --H --key-fields 1 --append-fields topmed_AF $f
 rm merge.tsv topmed.AF.tsv  
 ```
 
-
+![](./min.tsv)
 
 
 
