@@ -212,7 +212,13 @@ tsv-join --filter-file merge.tsv --H --key-fields 1 --append-fields topmed_AF $f
 rm merge.tsv topmed.AF.tsv  
 ```
 
-![](./min.tsv)
+| 参数 | T.min | F.min |
+| --- | --- | --- |
+| cDNA_position | 289 | 217 |
+| CDS_position | 1 | 7 |
+| Protein_position | 1 | 3 |
+| SIFT | 0 | 0 |
+| PolyPhen | 0 | 0 |
 
 
 
