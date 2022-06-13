@@ -1,9 +1,10 @@
 #! usr/bin/bash
 file1=$1
 file2=$2
+file3=$3
 
 echo -e "==> Construction of mutation site distribution map."
-for F in $1 $2; do 
+for F in $1 $2 $3; do 
     file_name=$(echo $F | cut -d "." -f 1)
     
     for i in EXON INTRON;do
@@ -14,8 +15,10 @@ for F in $1 $2; do
         # 判断输入的文件是致病还是不致病
         if [ $file_name == T ] ; then
             export PCONTENT="Pathogenic"
+        elif [ $file_name == F ] ; then
+            export PCONTENT="Non-pathogenic"
         else
-            export PCONTENT="Non-pathogenic"    
+            export PCONTENT="Unknown"    
         fi
         
         # 构建作图文件
@@ -37,7 +40,7 @@ done
 Rscript -e '
     library(ggplot2)
     JOB <- c("EXON","INTRON")
-    Pathogenicity <- c("T.","F.")
+    Pathogenicity <- c("T.","F.","unknown.")
     for(J in JOB) {
         for(P in Pathogenicity) {
             FILE1 <- paste(sep="", P, J, ".tsv")
@@ -70,7 +73,7 @@ rm INTRON.tem.tsv
     mv tem INTRON.LENGTH.tsv
 
 # 计算密度（每1kb发生的单核苷酸变异数量）
-for P in T F;do
+for P in T F unknown;do
     for i in EXON INTRON;do
         tsv-summarize -H --count -g 1 $P.$i.tsv > $P.$i.count.tsv
         tsv-join -H --filter-file $i.length.tsv --key-fields $i --append-fields length $P.$i.count.tsv > tem&&
@@ -94,7 +97,7 @@ rm *.LENGTH.tsv
 Rscript -e '
     library(ggplot2)
     JOB <- c("EXON","INTRON")
-    Pathogenicity <- c("T.","F.")
+    Pathogenicity <- c("T.","F.","unknown.")
     for(J in JOB) {
         for(P in Pathogenicity) {
             FILE1 <- paste(sep="", P, J, ".count.tsv")
