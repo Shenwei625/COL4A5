@@ -1,9 +1,10 @@
 #! usr/bin/bash
 file1=$1
 file2=$2
+file3=$3
 
 # 构建作图文件
-for F in $1 $2; do 
+for F in $1 $2 $3; do 
     file_name=$(echo $F | cut -d "." -f 1)
     tsv-filter -H --str-ne MAF:- $F | 
     tsv-select -H --fields MAF |
@@ -11,14 +12,16 @@ for F in $1 $2; do
 done
 
 # 构建作图文件
-for F in $1 $2; do
+for F in $1 $2 $3; do
     file_name=$(echo $F | cut -d "." -f 1)
 
     # 判断输入的文件是致病还是不致病
     if [ $file_name == T ] ; then
         export PCONTENT="Pathogenic"
+    elif [ $file_name == F ] ; then
+        export PCONTENT="Non-pathogenic"
     else
-        export PCONTENT="Non-pathogenic"    
+        export PCONTENT="Unknown"
     fi
 
     cat $file_name.MAF.tsv | perl -e' while (<>) {
@@ -35,7 +38,7 @@ done
 # 作图
 Rscript -e '
     library(ggplot2)
-    Pathogenicity <- c("T.","F.")
+    Pathogenicity <- c("T.","F.","unknown.")
     for(P in Pathogenicity) {
             FILE1 <- paste(sep="", P, "MAF", ".tsv")
             HISTABLE1 <- read.table(FILE1,header=TRUE,sep = "\t")
