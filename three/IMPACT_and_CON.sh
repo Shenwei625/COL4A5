@@ -1,9 +1,10 @@
 #! usr/bin/bash
 file1=$1
 file2=$2
+file3=$3
 
 # 获得绘图文件
-for F in $1 $2; do 
+for F in $1 $2 $3; do 
     file_name=$(echo $F | cut -d "." -f 1)
     for i in Consequence IMPACT; do
         tsv-filter -H --str-ne $i:- $F | 
@@ -68,10 +69,35 @@ Rscript -e '
             theme(legend.text=element_text(size=10)) +
             theme(text=element_text(size = 20, face = "bold")) +
             theme(legend.text=element_text(size=12))
-    
-        p1 + p2
+        
+        
+        FILE3 <- paste(sep="","unknown.", J, ".tsv")
+        PIEDATA3 <- read.table(FILE3,header=TRUE,sep = "\t")
+        TITLE3 <- paste(sep="","unknown.", J)
+        FENZI <- PIEDATA3$count
+        FENMU <- sum(PIEDATA3$count)
+        myLabel3 = as.vector(PIEDATA3[,J])
+        myLabel3 = paste(myLabel3, "(", FENZI, "/", FENMU, ",", round(PIEDATA2$count / sum(PIEDATA2$count) * 100, 2), "%" , ")")
+        PLABEL3 = as.vector(PIEDATA3[,J])
+
+        p3 <- ggplot(PIEDATA3,aes(x="", y=count, fill=get(J))) +
+            geom_bar(stat = "identity", width = 1) +
+            coord_polar(theta = "y") + 
+            labs(x = "", y = "", title = TITLE3) +
+            theme(axis.ticks = element_blank(), plot.title=element_text(hjust=0.5)) +
+            theme(axis.text.x = element_blank()) + 
+            theme(panel.grid = element_blank()) + 
+            theme(panel.background = element_rect(fill = "transparent",colour = NA)) + 
+            theme(legend.title = element_blank(), legend.position = "bottom") +
+            theme(legend.direction = "vertical") +
+            scale_fill_discrete( breaks = PIEDATA3[,J], labels = myLabel3 ) +
+            theme(legend.text=element_text(size=10)) +
+            theme(text=element_text(size = 20, face = "bold")) +
+            theme(legend.text=element_text(size=12))
+        
+        p1 + p2 + p3
         NAME <- paste(sep="", J, ".png" )
-        ggsave(file=NAME, width=17, height=12, dpi=300)
+        ggsave(file=NAME, width=26, height=12, dpi=300)
     }
 '
 
